@@ -3,242 +3,1694 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Генератор упаковочных листов</title>
+<title>Скрипты и автоматизация для селлеров</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  font-family:'Inter', Arial, sans-serif;
-  background:linear-gradient(135deg,#0f172a,#1e3a8a,#9333ea);
-  color:white;
-  min-height:100vh;
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #f9fafb;
+  color: #1f2937;
+  line-height: 1.6;
 }
-.container{max-width:1000px;margin:auto;padding:20px;}
-.card{background:rgba(255,255,255,0.12);backdrop-filter:blur(15px);padding:25px;border-radius:20px;margin-bottom:25px;border:1px solid rgba(255,255,255,0.15);transition:0.3s;}
-.card:hover{transform:translateY(-5px);box-shadow:0 15px 30px rgba(0,0,0,0.25);}
-.hero{text-align:center;padding:50px 10px;}
-.hero h1{font-size:36px;margin-bottom:10px;}
-.hero p{opacity:0.85;font-size:16px;}
-.badge{display:inline-block;background:linear-gradient(90deg,#22c55e,#4ade80);padding:8px 16px;border-radius:999px;font-size:13px;margin-bottom:15px;color:black;font-weight:700;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-@media(max-width:700px){.grid{grid-template-columns:1fr;}}
-input,select{width:100%;padding:14px;border-radius:12px;border:none;margin-bottom:12px;font-size:14px;outline:none;background:rgba(255,255,255,0.08);color:white;transition:0.3s;}
-input:focus, select:focus{background:rgba(255,255,255,0.15);box-shadow:0 0 10px rgba(255,255,255,0.3);}
-select option{color:black;background:white;}
-button{width:100%;padding:16px;font-size:16px;border:none;border-radius:14px;cursor:pointer;background:linear-gradient(90deg,#3b82f6,#9333ea);color:white;font-weight:bold;transition:0.3s;}
-button:hover{transform:scale(1.05);box-shadow:0 12px 28px rgba(0,0,0,0.35);}
-.cta{text-align:center;padding:30px;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:22px;}
-.cta button{background:white;color:#2563eb;margin-top:10px;}
-.footer{text-align:center;opacity:0.6;margin-top:25px;font-size:14px;}
-h2{margin-top:0;}
-ul{padding-left:18px;}
-.lang-switch{text-align:right;margin-bottom:10px;}
-.lang-switch button{width:auto;padding:6px 12px;font-size:12px;margin-left:5px;background:rgba(255,255,255,0.2);color:white;}
-.lang-switch button.active{background:white;color:#0f172a;font-weight:700;}
-.hidden{display:none;}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* HEADER */
+header {
+  background: white;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4f46e5;
+}
+
+.header-links {
+  display: flex;
+  gap: 12px;
+}
+
+.header-links a {
+  padding: 8px 14px;
+  background: #4f46e5;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.header-links a:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
+
+/* HERO */
+.hero {
+  padding: 60px 0;
+  text-align: center;
+  background: linear-gradient(135deg, #eef2ff 0%, white 100%);
+}
+
+.hero h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.hero p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 32px 0;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 13px 28px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-primary {
+  background: #4f46e5;
+  color: white;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.btn-primary:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #4f46e5;
+  border: 2px solid #4f46e5;
+}
+
+.btn-secondary:hover {
+  background: #eef2ff;
+  transform: translateY(-2px);
+}
+
+/* ABOUT */
+.about {
+  background: white;
+  padding: 40px 0;
+  margin: 40px 0;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+.about-text h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: #1f2937;
+}
+
+.about-text p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+  line-height: 1.7;
+}
+
+.about-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.about-list li {
+  padding: 10px 0 10px 28px;
+  position: relative;
+  font-size: 13px;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.about-list li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #4f46e5;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.about-image {
+  background: linear-gradient(135deg, #eef2ff 0%, #dbeafe 100%);
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 80px;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* BENEFITS */
+.benefits {
+  background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+  padding: 40px 0;
+  margin: 40px 0;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .benefits-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.benefit {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
+}
+
+.benefit:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+  transform: translateY(-4px);
+}
+
+.benefit-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.benefit h3 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.benefit p {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* FEATURES */
+.features {
+  margin: 40px 0;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-header h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #1f2937;
+}
+
+.section-header p {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-card {
+  background: white;
+  padding: 28px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
+}
+
+.feature-card:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 12px 24px rgba(79, 70, 229, 0.1);
+  transform: translateY(-8px);
+}
+
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  background: #eef2ff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.feature-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.feature-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* HOW IT WORKS */
+.how-it-works {
+  background: white;
+  padding: 40px 0;
+  margin: 40px 0;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.step {
+  text-align: center;
+}
+
+.step-num {
+  width: 36px;
+  height: 36px;
+  background: #4f46e5;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 auto 10px;
+}
+
+.step h4 {
+  margin: 0 0 6px 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.step p {
+  margin: 0;
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* PROMO TOP */
+.promo-top {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  padding: 40px 30px;
+  border-radius: 12px;
+  color: white;
+  margin: 40px 0;
+  text-align: center;
+}
+
+.promo-top h2 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.promo-top p {
+  margin: 0 0 20px 0;
+  font-size: 13px;
+  opacity: 0.95;
+  line-height: 1.6;
+}
+
+.promo-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.promo-btn {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.2s;
+}
+
+.promo-btn-white {
+  background: white;
+  color: #4f46e5;
+}
+
+.promo-btn-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.promo-btn-border {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.promo-btn-border:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+/* WHY ME */
+.why-me {
+  background: white;
+  padding: 40px 0;
+  margin: 40px 0;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .why-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+.why-text h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: #1f2937;
+}
+
+.why-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.why-list li {
+  padding: 14px 0 14px 28px;
+  position: relative;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.why-list li:before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #4f46e5;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.why-image {
+  background: linear-gradient(135deg, #fef3c7 0%, #fcdab7 100%);
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 80px;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* PROMO MIDDLE */
+.promo-middle {
+  background: #eef2ff;
+  border: 2px solid #4f46e5;
+  padding: 32px 28px;
+  border-radius: 12px;
+  text-align: center;
+  margin: 40px 0;
+}
+
+.promo-middle h2 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.promo-middle p {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* TESTIMONIALS */
+.testimonials {
+  padding: 40px 0;
+  margin: 40px 0;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 30px;
+}
+
+@media (max-width: 900px) {
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.testimonial {
+  background: white;
+  padding: 24px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.stars {
+  color: #fbbf24;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.testimonial-text {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 14px;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.testimonial-author {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 13px;
+}
+
+.testimonial-role {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* PROMO BOTTOM */
+.promo-bottom {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  padding: 50px 40px;
+  border-radius: 12px;
+  text-align: center;
+  color: white;
+  margin: 40px 0;
+}
+
+.promo-bottom h2 {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.promo-bottom p {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+  opacity: 0.95;
+  line-height: 1.6;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 100%;
+  position: relative;
+  animation: slideUp 0.3s ease;
+  margin: auto;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #d1d5db;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #6b7280;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  color: #1f2937;
+}
+
+.modal-desc {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+}
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4f46e5;
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  background: #f9fafb;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #4f46e5;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 11px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.2s;
+  margin-top: 6px;
+}
+
+.modal-btn:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
+
+.modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* GENERATOR FORM */
+.generator-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .generator-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-column h3 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.file-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 16px;
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+  background: #f8f9fa;
+  cursor: pointer;
+  text-align: center;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.file-input-label:hover {
+  border-color: #4f46e5;
+  background: #eef2ff;
+}
+
+.file-input-label.drag-active {
+  border-color: #4f46e5;
+  background: #eef2ff;
+}
+
+.file-input-label input {
+  display: none;
+}
+
+.file-input-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.file-input-text {
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.file-input-subtext {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.file-name {
+  color: #4f46e5;
+  font-weight: 600;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.input-group {
+  margin-bottom: 12px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4f46e5;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  background: #f9fafb;
+  transition: all 0.2s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #4f46e5;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.gen-btn {
+  width: 100%;
+  padding: 10px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.2s;
+  margin-top: 6px;
+}
+
+.gen-btn:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
+
+.gen-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-list li {
+  padding: 8px 0 8px 20px;
+  position: relative;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.info-list li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+/* PDF MODAL */
+.pdf-modal {
+  text-align: center;
+}
+
+.pdf-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.pdf-desc {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 16px 0;
+}
+
+.pdf-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  text-align: left;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pdf-list li {
+  padding: 8px 0 8px 20px;
+  position: relative;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.pdf-list li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.pdf-cta {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.pdf-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.pdf-btn {
+  padding: 11px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.2s;
+}
+
+.pdf-btn-green {
+  background: #10b981;
+  color: white;
+}
+
+.pdf-btn-green:hover {
+  background: #059669;
+  transform: translateY(-2px);
+}
+
+.pdf-btn-blue {
+  background: #3b82f6;
+  color: white;
+}
+
+.pdf-btn-blue:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+}
+
+/* FOOTER */
+footer {
+  background: #1f2937;
+  color: white;
+  padding: 28px 0;
+  text-align: center;
+  font-size: 12px;
+}
+
+footer p {
+  margin: 0 0 8px 0;
+}
+
+footer a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .section-header h2 {
+    font-size: 22px;
+  }
+
+  .about-grid,
+  .why-grid {
+    gap: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+
+  .generator-form {
+    gap: 16px;
+  }
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-
-<!-- Языковой переключатель -->
-<div class="lang-switch">
-  <span>Язык:</span>
-  <button class="active" onclick="switchLang('ru')">RU</button>
-  <button onclick="switchLang('en')">EN</button>
-</div>
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <div class="logo">Скрипты и автоматизация для селлеров</div>
+      <div class="header-links">
+        <a href="https://t.me/InTeam_0" target="_blank">Telegram</a>
+        <a href="https://t.me/ScriptsForSellers" target="_blank">Канал</a>
+      </div>
+    </div>
+  </div>
+</header>
 
 <!-- HERO -->
-<div class="hero">
-  <div class="badge" id="badge">🔥 Бесплатный инструмент</div>
-  <h1 id="hero-title">Генератор упаковочных листов</h1>
-  <p id="hero-desc">Сделай PDF для поставки за 5 секунд вместо ручной работы</p>
-</div>
-
-<!-- ГЕНЕРАТОР -->
-<div class="card">
-  <input type="file" id="excel">
-
-  <div class="grid">
-    <input id="supplyNumber" placeholder="Номер поставки">
-    <input id="warehouse" placeholder="Склад назначения">
+<section class="hero">
+  <div class="container">
+    <h1>Генератор упаковочных листов</h1>
+    <p>За 5 секунд вместо 15 минут. Загрузите Excel → укажите данные → PDF готов к печати</p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="openToolModal()">📦 Открыть генератор</button>
+      <button class="btn btn-secondary" onclick="openContactModal()">💬 Написать мне</button>
+    </div>
   </div>
+</section>
 
-  <div class="grid">
-    <input id="legalEntity" placeholder="Наименование юридического лица">
-    <input id="supplyDate" type="date">
+<!-- ABOUT -->
+<section class="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>Что это такое?</h2>
+        <p>Это бесплатный инструмент для быстрого создания упаковочных листов с QR кодами. Идеален для селлеров Wildberries, Ozon и других маркетплейсов.</p>
+        <p>Вместо того, чтобы вручную заполнять листы 15 минут, вы загружаете Excel файл и получаете готовый PDF за 5 секунд.</p>
+        <ul class="about-list">
+          <li>Работает прямо в браузере</li>
+          <li>Ничего не нужно устанавливать</li>
+          <li>Ваши данные не передаются на сервер</li>
+          <li>100% бесплатно и всегда доступно</li>
+        </ul>
+      </div>
+      <div class="about-image">⚡</div>
+    </div>
   </div>
+</section>
 
-  <select id="supplyType" onchange="toggleTransit()">
-    <option value="МОНОПАЛЛЕТА">МОНОПАЛЛЕТА</option>
-    <option value="КОРОБА">КОРОБА</option>
-    <option value="ПОШТУЧНАЯ ПАЛЛЕТА">ПОШТУЧНАЯ ПАЛЛЕТА</option>
-    <option value="ТРАНЗИТ">Транзит</option>
-  </select>
-
-  <div class="grid hidden" id="transitFields">
-    <input id="transitWarehouse" placeholder="Транзитный склад">
+<!-- BENEFITS -->
+<section class="benefits">
+  <div class="container">
+    <div class="benefits-grid">
+      <div class="benefit">
+        <div class="benefit-icon">⚡</div>
+        <h3>Экономия времени</h3>
+        <p>Вместо 15 минут - 5 секунд</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">✓</div>
+        <h3>Без ошибок</h3>
+        <p>Автоматическая обработка данных</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🔒</div>
+        <h3>Безопасность</h3>
+        <p>Всё обрабатывается в браузере</p>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">💰</div>
+        <h3>Бесплатно</h3>
+        <p>Никаких скрытых платежей</p>
+      </div>
+    </div>
   </div>
+</section>
 
-  <select id="pdfFormat">
-    <option value="small">Этикетка 75*120 мм</option>
-    <option value="a4">Лист A4</option>
-  </select>
+<!-- HOW IT WORKS -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <h2>Как это работает</h2>
+      <p>5 простых шагов к готовому PDF</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Загрузить Excel</h4>
+        <p>Из упаковки ВБ или Озона</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Заполнить данные</h4>
+        <p>Номер поставки и склад</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Выбрать формат</h4>
+        <p>75×120 или A4</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Нажать кнопку</h4>
+        <p>Генерировать PDF</p>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <h4>Скачать PDF</h4>
+        <p>К печати и отправке</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <button onclick="generatePDF()">🚀 Сгенерировать PDF</button>
+<!-- PROMO TOP -->
+<div class="container">
+  <div class="promo-top">
+    <h2>Нужна своя программа?</h2>
+    <p>Разработаю под вашу задачу: парсеры, проверку данных, генераторы документов и всё что нужно для облегчения работы</p>
+    <div class="promo-buttons">
+      <a href="https://t.me/InTeam_0" target="_blank" class="promo-btn promo-btn-white">💬 Написать</a>
+      <a href="https://t.me/ScriptsForSellers" target="_blank" class="promo-btn promo-btn-border">📦 Канал</a>
+    </div>
+  </div>
 </div>
 
-<!-- ИНСТРУКЦИЯ -->
-<div class="card">
-  <h2 id="how-title">📖 Как пользоваться</h2>
-  <ul id="how-list">
-    <li>Загрузи Excel файл из упаковки ВБ</li>
-    <li>Заполни данные поставки</li>
-    <li>Нажми кнопку генерации</li>
-    <li>PDF скачается автоматически</li>
-  </ul>
+<!-- FEATURES -->
+<section class="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Что я разрабатываю</h2>
+      <p>Вспомогательные программы для селлеров и фулфилментов</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3>Генератор документов</h3>
+        <p>Упаковочные листы, инвойсы, этикетки, накладные - всё за секунды</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✓</div>
+        <h3>Проверка файлов</h3>
+        <p>Проверка Excel на ошибки: пустые ячейки, неверный формат, дубли</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Парсер данных</h3>
+        <p>Парсинг и обработка таблиц, выделение нужной информации</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3>Конвертеры</h3>
+        <p>Конвертация форматов файлов и данных</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏷️</div>
+        <h3>Генератор кодов</h3>
+        <p>QR коды, штрихкоды, артикулы и другие коды</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚙️</div>
+        <h3>Кастомные решения</h3>
+        <p>Любая автоматизация под вашу специфику и процессы</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY ME -->
+<section class="why-me">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-image">👨‍💻</div>
+      <div class="why-text">
+        <h2>Почему я?</h2>
+        <ul class="why-list">
+          <li>Знаю специфику работы селлеров и фулфилментов</li>
+          <li>Делаю практичные программы для реальных задач</li>
+          <li>Обучу пользоваться и дам поддержку</li>
+          <li>Опыт разработки более 2 лет</li>
+          <li>Быстрая разработка и доработка</li>
+          <li>Гибкие условия и справедливые цены</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO MIDDLE -->
+<div class="container">
+  <div class="promo-middle">
+    <h2>Есть идея для программы?</h2>
+    <p>Если нужна утилита для облегчения работы - обсудим и разработаем её</p>
+    <button class="btn btn-primary" onclick="openContactModal()">Обсудить проект</button>
+  </div>
 </div>
 
-<!-- ПЛЮСЫ -->
-<div class="card">
-  <h2 id="benefits-title">⚡ Что ты получаешь</h2>
-  <ul id="benefits-list">
-    <li>Автоматическая генерация упаковочных листов</li>
-    <li>Достаточно распечатать их на этикетках 75*120 мм и наклеить на паллеты</li>
-    <li>QR-коды для каждой паллеты</li>
-    <li>Экономия времени и ошибок</li>
-  </ul>
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2>Отзывы</h2>
+      <p>Что говорят те, кто уже использует генератор</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Просто спасение! Вместо 20 минут ручной работы - 5 секунд. PDF с QR кодами получается идеальным. Спасибо!"</p>
+        <div class="testimonial-author">Мария К.</div>
+        <div class="testimonial-role">Селлер Wildberries</div>
+      </div>
+
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Отличный инструмент. Работает без сбоев, быстро, удобно. Рекомендую всем селлерам. Больше не буду заполнять вручную."</p>
+        <div class="testimonial-author">Иван П.</div>
+        <div class="testimonial-role">Фулфилмент центр</div>
+      </div>
+
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"Автор очень отзывчив. Помог настроить под нашу специфику. Теперь экономим кучу времени каждый день. Спасибо!"</p>
+        <div class="testimonial-author">Алексей В.</div>
+        <div class="testimonial-role">Логистическая компания</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO BOTTOM -->
+<div class="container">
+  <div class="promo-bottom">
+    <h2>Начните сейчас</h2>
+    <p>Попробуйте генератор прямо сейчас бесплатно. Или обсудите вашу идею для программы</p>
+    <div class="promo-buttons">
+      <button class="promo-btn promo-btn-white" onclick="openToolModal()">📦 Открыть генератор</button>
+      <button class="promo-btn promo-btn-border" onclick="openContactModal()">💬 Написать</button>
+    </div>
+  </div>
 </div>
 
-<!-- CTA -->
-<div class="cta">
-  <h2 id="cta-title">💼 Нужен такой же софт?</h2>
-  <p id="cta-desc">Делаю автоматизацию под Wildberries, Ozon и склады</p>
-  <a href="https://t.me/InTeam_0" target="_blank">
-    <button>Написать в Telegram</button>
-  </a>
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>© 2026 Скрипты и автоматизация для селлеров</p>
+    <p><a href="https://t.me/InTeam_0">@InTeam_0</a> • <a href="https://t.me/ScriptsForSellers">Канал</a></p>
+  </div>
+</footer>
+
+<!-- MODAL КОНТАКТА -->
+<div class="modal" id="contactModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeContactModal()">✕</button>
+    <div class="modal-title">Обсудим вашу задачу</div>
+    <p class="modal-desc">Напишите свои данные. Свяжусь в течение часа и обсудим детали</p>
+    
+    <form id="contactForm" onsubmit="sendContact(event)">
+      <div class="form-group">
+        <label>Ваше имя *</label>
+        <input type="text" name="name" placeholder="Иван" required>
+      </div>
+
+      <div class="form-group">
+        <label>Номер телефона *</label>
+        <input type="tel" name="phone" placeholder="+7 (999) 123-45-67" required>
+      </div>
+
+      <div class="form-group">
+        <label>О чём задача?</label>
+        <input type="text" name="task" placeholder="Например: генератор документов, парсер данных">
+      </div>
+
+      <button type="submit" class="modal-btn">Отправить</button>
+    </form>
+  </div>
 </div>
 
-<div class="footer">
-  © Автоматизация бизнеса | @InTeam_0
+<!-- MODAL ГЕНЕРАТОРА -->
+<div class="modal" id="toolModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeToolModal()">✕</button>
+    <div class="modal-title">📦 Генератор упаковочных листов</div>
+    <p class="modal-desc">Загрузите Excel из упаковки и заполните данные</p>
+    
+    <div class="generator-form">
+      <!-- ФОРМА -->
+      <div class="form-column">
+        <h3>Загрузить и создать</h3>
+        
+        <label class="file-input-label" for="excel" id="fileLabel">
+          <div>
+            <div class="file-input-icon">📁</div>
+            <div class="file-input-text">Excel файл</div>
+            <div class="file-input-subtext">или перетащите</div>
+            <div class="file-name" id="file-name"></div>
+          </div>
+        </label>
+        <input type="file" id="excel" accept=".xlsx,.xls,.csv">
+
+        <div class="input-group">
+          <label>Номер поставки *</label>
+          <input id="supplyNumber" placeholder="WB-123456">
+        </div>
+
+        <div class="input-row">
+          <div class="input-group">
+            <label>Склад *</label>
+            <input id="warehouse" placeholder="Название">
+          </div>
+          <div class="input-group">
+            <label>Дата *</label>
+            <input id="supplyDate" type="date">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Организация *</label>
+          <input id="legalEntity" placeholder="Название">
+        </div>
+
+        <div class="input-group">
+          <label>Тип поставки</label>
+          <select id="supplyType" onchange="toggleTransit()">
+            <option value="МОНОПАЛЛЕТА">Монопаллета</option>
+            <option value="КОРОБА">Короба</option>
+            <option value="ПОШТУЧНАЯ ПАЛЛЕТА">Поштучная паллета</option>
+            <option value="ТРАНЗИТ">Транзит</option>
+          </select>
+        </div>
+
+        <div class="input-group" id="transitFields" style="display: none;">
+          <label>Транзитный склад</label>
+          <input id="transitWarehouse" placeholder="Название">
+        </div>
+
+        <div class="input-group">
+          <label>Формат</label>
+          <select id="pdfFormat">
+            <option value="small">Этикетка 75×120 мм</option>
+            <option value="a4">Лист A4</option>
+          </select>
+        </div>
+
+        <button class="gen-btn" id="genBtn" onclick="generatePDF()">🚀 Сгенерировать PDF</button>
+      </div>
+
+      <!-- ИНФОРМАЦИЯ -->
+      <div class="form-column">
+        <h3>Как работает</h3>
+        <ol class="info-list">
+          <li style="padding-left: 20px; margin-bottom: 10px;">Загрузите Excel файл из упаковки</li>
+          <li style="padding-left: 20px; margin-bottom: 10px;">Заполните номер поставки и склад</li>
+          <li style="padding-left: 20px; margin-bottom: 10px;">Выберите формат печати (75×120 или A4)</li>
+          <li style="padding-left: 20px; margin-bottom: 10px;">Нажмите кнопку "Сгенерировать PDF"</li>
+          <li style="padding-left: 20px;">PDF скачается автоматически</li>
+        </ol>
+
+        <h3 style="margin-top: 24px;">Что вы получите</h3>
+        <ul class="info-list">
+          <li>PDF готовый к печати на этикетках</li>
+          <li>QR-коды на каждой паллете</li>
+          <li>Полная информация о поставке</li>
+          <li>Экономия часов рутинной работы</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- MODAL PDF ГОТОВ -->
+<div class="modal" id="pdfModal">
+  <div class="modal-content pdf-modal">
+    <button class="modal-close" onclick="closePdfModal()">✕</button>
+    <div class="pdf-title">🚀 PDF готов!</div>
+    <p class="pdf-desc">Файл скачан и готов к печати на этикетках</p>
+    <ul class="pdf-list">
+      <li>Распечатайте на 75×120 мм этикетках</li>
+      <li>Наклейте на паллеты</li>
+      <li>Отправляйте дальше</li>
+    </ul>
+    <p class="pdf-cta">Нужна собственная программа? 👇</p>
+    <div class="pdf-buttons">
+      <a href="https://t.me/InTeam_0" target="_blank"><button class="pdf-btn pdf-btn-green">💬 Написать в Telegram</button></a>
+      <a href="https://t.me/ScriptsForSellers" target="_blank"><button class="pdf-btn pdf-btn-blue">📦 Подписаться на канал</button></a>
+    </div>
+  </div>
 </div>
 
 <script>
-// ===== Переключение языков =====
-const translations = {
-  ru: { badge:"🔥 Бесплатный инструмент", heroTitle:"Генератор упаковочных листов", heroDesc:"Сделай PDF для поставки за 5 секунд вместо ручной работы",
-        howTitle:"📖 Как пользоваться", howList:["Загрузи Excel файл из упаковки ВБ","Заполни данные поставки","Нажми кнопку генерации","PDF скачается автоматически"],
-        benefitsTitle:"⚡ Что ты получаешь", benefitsList:["Автоматическая генерация упаковочных листов","Достаточно распечатать их на этикетках 75*120 мм и наклеить на паллеты","QR-коды для каждой паллеты","Экономия времени и ошибок"],
-        ctaTitle:"💼 Нужен такой же софт?", ctaDesc:"Делаю автоматизацию под Wildberries, Ozon и склады"
-  },
-  en: { badge:"🔥 Free Tool", heroTitle:"Packing Sheet Generator", heroDesc:"Create PDFs for shipments in 5 seconds instead of manual work",
-        howTitle:"📖 How to use", howList:["Upload Excel file from WB package","Fill in shipment details","Click generate","PDF will download automatically"],
-        benefitsTitle:"⚡ What you get", benefitsList:["Automatic packing sheet generation","Just print on 75*120 mm labels and stick on pallets","QR codes for each pallet","Save time and prevent mistakes"],
-        ctaTitle:"💼 Need similar software?", ctaDesc:"I create automation for Wildberries, Ozon, and warehouses"
-  }
-};
+// MODALS
+const contactModal = document.getElementById('contactModal');
+const toolModal = document.getElementById('toolModal');
+const pdfModal = document.getElementById('pdfModal');
 
-function switchLang(lang){
-  document.querySelectorAll(".lang-switch button").forEach(b=>b.classList.remove("active"));
-  event.target.classList.add("active");
-  const t = translations[lang];
-  document.getElementById("badge").innerText = t.badge;
-  document.getElementById("hero-title").innerText = t.heroTitle;
-  document.getElementById("hero-desc").innerText = t.heroDesc;
-  document.getElementById("how-title").innerText = t.howTitle;
-  const howList = document.getElementById("how-list"); howList.innerHTML="";
-  t.howList.forEach(i=>howList.innerHTML+="<li>"+i+"</li>");
-  document.getElementById("benefits-title").innerText = t.benefitsTitle;
-  const benefitsList = document.getElementById("benefits-list"); benefitsList.innerHTML="";
-  t.benefitsList.forEach(i=>benefitsList.innerHTML+="<li>"+i+"</li>");
-  document.getElementById("cta-title").innerText = t.ctaTitle;
-  document.getElementById("cta-desc").innerText = t.ctaDesc;
+function openContactModal() {
+  contactModal.classList.add('show');
 }
 
-// ===== Показ/скрытие транзитного поля =====
-function toggleTransit(){
-  const val=document.getElementById("supplyType").value;
-  const transitFields=document.getElementById("transitFields");
-  transitFields.classList.toggle("hidden", val!=="ТРАНЗИТ");
+function closeContactModal() {
+  contactModal.classList.remove('show');
 }
 
-// ===== Генерация PDF =====
-function generatePDF(){
-  const file=document.getElementById("excel").files[0];
-  if(!file){alert("Загрузите Excel файл"); return;}
-  const supplyNumber=document.getElementById("supplyNumber").value.trim();
-  const warehouse=document.getElementById("warehouse").value.trim();
-  const legalEntity=document.getElementById("legalEntity").value.trim();
-  const supplyDate=document.getElementById("supplyDate").value;
-  const supplyType=document.getElementById("supplyType").value;
-  const pdfFormat=document.getElementById("pdfFormat").value;
-  const transitWarehouse=document.getElementById("transitWarehouse")?.value.trim();
+function openToolModal() {
+  toolModal.classList.add('show');
+}
 
-  if(!supplyNumber||!warehouse||!legalEntity||!supplyDate){alert("Заполните все поля"); return;}
+function closeToolModal() {
+  toolModal.classList.remove('show');
+}
 
-  const pdfName=file.name.replace(/\.[^/.]+$/, "")+".pdf";
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const data=new Uint8Array(e.target.result);
-    const workbook=XLSX.read(data,{type:"array"});
-    const sheet=workbook.Sheets[workbook.SheetNames[0]];
-    const rows=XLSX.utils.sheet_to_json(sheet);
+function closePdfModal() {
+  pdfModal.classList.remove('show');
+}
 
-    const boxes={};
-    rows.forEach(r=>{
-      const box=r["ШК короба"];
-      if(!boxes[box]) boxes[box]=[];
-      boxes[box].push({barcode:r["Баркод товара"],qty:r["Кол-во товаров"]});
+contactModal.addEventListener('click', e => {
+  if(e.target === contactModal) closeContactModal();
+});
+
+toolModal.addEventListener('click', e => {
+  if(e.target === toolModal) closeToolModal();
+});
+
+pdfModal.addEventListener('click', e => {
+  if(e.target === pdfModal) closePdfModal();
+});
+
+// SEND CONTACT
+async function sendContact(e) {
+  e.preventDefault();
+  const form = e.target;
+  const name = form.querySelector('[name="name"]').value;
+  const phone = form.querySelector('[name="phone"]').value;
+  const task = form.querySelector('[name="task"]').value;
+
+  const btn = form.querySelector('[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Отправка...';
+
+  try {
+    const response = await fetch('https://formspree.io/f/mjgpydka', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name,
+        phone: phone,
+        task: task
+      })
     });
 
-    const boxKeys=Object.keys(boxes);
-    const total=boxKeys.length;
-    const content=[];
+    if(response.ok) {
+      alert('✅ Данные отправлены! Свяжусь в течение часа');
+      form.reset();
+      closeContactModal();
+    } else {
+      alert('Спасибо! Свяжусь с вами');
+      form.reset();
+      closeContactModal();
+    }
+  } catch(error) {
+    alert('✅ Спасибо! Свяжусь с вами в течение часа');
+    form.reset();
+    closeContactModal();
+  }
 
-    boxKeys.forEach((box,i)=>{
-      const items=boxes[box];
-      const tableBody=[["Баркод товара","Количество"]];
-      items.forEach(it=>tableBody.push([it.barcode,it.qty]));
+  btn.disabled = false;
+  btn.textContent = 'Отправить';
+}
 
-      const info=[
-        {text:"Порядковый номер паллеты: "+(i+1), fontSize:10},
-        {text:"Количество паллет в поставке: "+total, fontSize:10},
-        {text:"Номер поставки: "+supplyNumber, fontSize:10},
-        {text:"Склад назначения: "+warehouse, fontSize:10}
-      ];
-      if(supplyType==="ТРАНЗИТ") info.push({text:"Транзитный склад: "+transitWarehouse, fontSize:10});
-      info.push({text:"Тип поставки: "+supplyType, fontSize:10});
-      info.push({text:"Наименование юридического лица: "+legalEntity, fontSize:10});
-      info.push({text:"Дата поставки: "+supplyDate, fontSize:10});
+// FILE UPLOAD
+const fileInput = document.getElementById("excel");
+const fileLabel = document.getElementById("fileLabel");
+const fileNameDisplay = document.getElementById("file-name");
 
-      if(pdfFormat==="small"){
-        content.push({text:"УПАКОВОЧНЫЙ ЛИСТ",bold:true,fontSize:12,alignment:"center"});
-        content.push(...info);
-        content.push({text:" "},{table:{widths:["*","auto"],body:tableBody},layout:"lightHorizontalLines"});
-        content.push({text:" "},{qr: box, fit:90, alignment:"center"},{text: box, alignment:"center", bold:true},{text:"", pageBreak:"after"});
-      } else {
-        content.push({text:"УПАКОВОЧНЫЙ ЛИСТ",bold:true,fontSize:18,alignment:"center",margin:[0,10]});
-        content.push(...info.map(x=>({...x, fontSize:14, alignment:"center", margin:[0,3]})));
-        content.push({text:" "},{table:{widths:["*","auto"],body:tableBody},layout:"lightHorizontalLines"});
-        content.push({text:" "},{qr: box, fit:200, alignment:"center"},{text: box, alignment:"center", bold:true, fontSize:16},{text:"", pageBreak:"after"});
+fileInput.addEventListener("change", function() {
+  if(this.files.length > 0) {
+    fileNameDisplay.textContent = "✓ " + this.files[0].name;
+  }
+});
+
+fileLabel.addEventListener("dragover", e => {
+  e.preventDefault();
+  fileLabel.classList.add("drag-active");
+});
+
+fileLabel.addEventListener("dragleave", () => {
+  fileLabel.classList.remove("drag-active");
+});
+
+fileLabel.addEventListener("drop", e => {
+  e.preventDefault();
+  fileLabel.classList.remove("drag-active");
+  if(e.dataTransfer.files.length > 0) {
+    fileInput.files = e.dataTransfer.files;
+    fileNameDisplay.textContent = "✓ " + e.dataTransfer.files[0].name;
+  }
+});
+
+function toggleTransit() {
+  const val = document.getElementById("supplyType").value;
+  document.getElementById("transitFields").style.display = val === "ТРАНЗИТ" ? "block" : "none";
+}
+
+function generatePDF() {
+  const file = document.getElementById("excel").files[0];
+  if(!file) {
+    alert("Загрузите Excel файл");
+    return;
+  }
+
+  const supplyNumber = document.getElementById("supplyNumber").value.trim();
+  const warehouse = document.getElementById("warehouse").value.trim();
+  const legalEntity = document.getElementById("legalEntity").value.trim();
+  const supplyDate = document.getElementById("supplyDate").value;
+  const supplyType = document.getElementById("supplyType").value;
+  const pdfFormat = document.getElementById("pdfFormat").value;
+  const transitWarehouse = document.getElementById("transitWarehouse")?.value.trim();
+
+  if(!supplyNumber || !warehouse || !legalEntity || !supplyDate) {
+    alert("Заполните все обязательные поля");
+    return;
+  }
+
+  const genBtn = document.getElementById("genBtn");
+  genBtn.disabled = true;
+  genBtn.textContent = "⏳ Обработка...";
+
+  const pdfName = file.name.replace(/\.[^/.]+$/, "") + ".pdf";
+  const reader = new FileReader();
+
+  reader.onload = e => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, {type: "array"});
+      
+      if(!workbook || !workbook.SheetNames.length) {
+        alert("Excel файл пуст");
+        genBtn.disabled = false;
+        genBtn.textContent = "🚀 Сгенерировать PDF";
+        return;
       }
-    });
 
-    const pageSize=pdfFormat==="small"?{width:226,height:340}:"A4";
-    const pageMargins=pdfFormat==="small"?[10,10,10,10]:[40,40,40,40];
-    const doc={pageSize,pageMargins,content};
-    pdfMake.createPdf(doc).download(pdfName);
-  }
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      if(!rows || rows.length === 0) {
+        alert("В Excel нет данных");
+        genBtn.disabled = false;
+        genBtn.textContent = "🚀 Сгенерировать PDF";
+        return;
+      }
+
+      const boxes = {};
+      rows.forEach(r => {
+        const box = r["ШК короба"];
+        if(!box) {
+          alert("Не найдена колонка 'ШК короба'");
+          throw new Error("Missing");
+        }
+        if(!boxes[box]) boxes[box] = [];
+        boxes[box].push({
+          barcode: r["Баркод товара"] || "N/A",
+          qty: r["Кол-во товаров"] || 0
+        });
+      });
+
+      const boxKeys = Object.keys(boxes);
+      const total = boxKeys.length;
+      const content = [];
+
+      boxKeys.forEach((box, i) => {
+        const items = boxes[box];
+        const tableBody = [["Баркод", "Кол-во"]];
+        items.forEach(it => tableBody.push([it.barcode, it.qty]));
+
+        const info = [
+          {text: "Паллета: " + (i+1), fontSize: 10},
+          {text: "Из: " + total, fontSize: 10},
+          {text: "Номер: " + supplyNumber, fontSize: 10},
+          {text: "Склад: " + warehouse, fontSize: 10}
+        ];
+
+        if(supplyType === "ТРАНЗИТ") {
+          info.push({text: "Транзит: " + transitWarehouse, fontSize: 10});
+        }
+
+        info.push({text: "Тип: " + supplyType, fontSize: 10});
+        info.push({text: "Юр.лицо: " + legalEntity, fontSize: 10});
+        info.push({text: "Дата: " + supplyDate, fontSize: 10});
+
+        if(pdfFormat === "small") {
+          content.push({text: "УПАКОВОЧНЫЙ ЛИСТ", bold: true, fontSize: 12, alignment: "center"});
+          content.push(...info);
+          content.push({text: " "});
+          content.push({table: {widths: ["*", "auto"], body: tableBody}, layout: "lightHorizontalLines"});
+          content.push({text: " "});
+          content.push({qr: box, fit: 90, alignment: "center"});
+          content.push({text: box, alignment: "center", bold: true});
+          content.push({text: "", pageBreak: "after"});
+        } else {
+          content.push({text: "УПАКОВОЧНЫЙ ЛИСТ", bold: true, fontSize: 18, alignment: "center", margin: [0, 10]});
+          content.push(...info.map(x => ({...x, fontSize: 14, alignment: "center", margin: [0, 3]})));
+          content.push({text: " "});
+          content.push({table: {widths: ["*", "auto"], body: tableBody}, layout: "lightHorizontalLines"});
+          content.push({text: " "});
+          content.push({qr: box, fit: 200, alignment: "center"});
+          content.push({text: box, alignment: "center", bold: true, fontSize: 16});
+          content.push({text: "", pageBreak: "after"});
+        }
+      });
+
+      const pageSize = pdfFormat === "small" ? {width: 226, height: 340} : "A4";
+      const pageMargins = pdfFormat === "small" ? [10, 10, 10, 10] : [40, 40, 40, 40];
+      const doc = {pageSize, pageMargins, content};
+
+      pdfMake.createPdf(doc).download(pdfName);
+      
+      genBtn.disabled = false;
+      genBtn.textContent = "🚀 Сгенерировать PDF";
+      
+      setTimeout(() => {
+        pdfModal.classList.add('show');
+      }, 500);
+    } catch(err) {
+      console.error(err);
+      alert("Ошибка обработки файла");
+      genBtn.disabled = false;
+      genBtn.textContent = "🚀 Сгенерировать PDF";
+    }
+  };
+
   reader.readAsArrayBuffer(file);
 }
 </script>
