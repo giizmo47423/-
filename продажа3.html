@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Генератор упаковочных листов</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:'Inter', Arial, sans-serif;
+  background:linear-gradient(135deg,#0f172a,#1e3a8a,#9333ea);
+  color:white;
+  min-height:100vh;
+}
+.container{max-width:1000px;margin:auto;padding:20px;}
+.card{background:rgba(255,255,255,0.12);backdrop-filter:blur(15px);padding:25px;border-radius:20px;margin-bottom:25px;border:1px solid rgba(255,255,255,0.15);transition:0.3s;}
+.card:hover{transform:translateY(-5px);box-shadow:0 15px 30px rgba(0,0,0,0.25);}
+.hero{text-align:center;padding:50px 10px;}
+.hero h1{font-size:36px;margin-bottom:10px;}
+.hero p{opacity:0.85;font-size:16px;}
+.badge{display:inline-block;background:linear-gradient(90deg,#22c55e,#4ade80);padding:8px 16px;border-radius:999px;font-size:13px;margin-bottom:15px;color:black;font-weight:700;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:700px){.grid{grid-template-columns:1fr;}}
+input,select{width:100%;padding:14px;border-radius:12px;border:none;margin-bottom:12px;font-size:14px;outline:none;background:rgba(255,255,255,0.08);color:white;transition:0.3s;}
+input:focus, select:focus{background:rgba(255,255,255,0.15);box-shadow:0 0 10px rgba(255,255,255,0.3);}
+select option{color:black;background:white;}
+button{width:100%;padding:16px;font-size:16px;border:none;border-radius:14px;cursor:pointer;background:linear-gradient(90deg,#3b82f6,#9333ea);color:white;font-weight:bold;transition:0.3s;}
+button:hover{transform:scale(1.05);box-shadow:0 12px 28px rgba(0,0,0,0.35);}
+.cta{text-align:center;padding:30px;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:22px;}
+.cta button{background:white;color:#2563eb;margin-top:10px;}
+.footer{text-align:center;opacity:0.6;margin-top:25px;font-size:14px;}
+h2{margin-top:0;}
+ul{padding-left:18px;}
+.lang-switch{text-align:right;margin-bottom:10px;}
+.lang-switch button{width:auto;padding:6px 12px;font-size:12px;margin-left:5px;background:rgba(255,255,255,0.2);color:white;}
+.lang-switch button.active{background:white;color:#0f172a;font-weight:700;}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- Языковой переключатель -->
+<div class="lang-switch">
+  <span>Язык:</span>
+  <button class="active" onclick="switchLang('ru')">RU</button>
+  <button onclick="switchLang('en')">EN</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge" id="badge">🔥 Бесплатный инструмент</div>
+  <h1 id="hero-title">Генератор упаковочных листов</h1>
+  <p id="hero-desc">Сделай PDF для поставки за 5 секунд вместо ручной работы</p>
+</div>
+
+<!-- ГЕНЕРАТОР -->
+<div class="card">
+  <input type="file" id="excel">
+
+  <div class="grid">
+    <input id="supplyNumber" placeholder="Номер поставки">
+    <input id="warehouse" placeholder="Склад назначения">
+  </div>
+
+  <div class="grid">
+    <input id="legalEntity" placeholder="Наименование юридического лица">
+    <input id="supplyDate" type="date">
+  </div>
+
+  <select id="supplyType" onchange="toggleTransit()">
+    <option value="МОНОПАЛЛЕТА">МОНОПАЛЛЕТА</option>
+    <option value="КОРОБА">КОРОБА</option>
+    <option value="ПОШТУЧНАЯ ПАЛЛЕТА">ПОШТУЧНАЯ ПАЛЛЕТА</option>
+    <option value="ТРАНЗИТ">Транзит</option>
+  </select>
+
+  <div class="grid hidden" id="transitFields">
+    <input id="transitWarehouse" placeholder="Транзитный склад">
+  </div>
+
+  <select id="pdfFormat">
+    <option value="small">Этикетка 75*120 мм</option>
+    <option value="a4">Лист A4</option>
+  </select>
+
+  <button onclick="generatePDF()">🚀 Сгенерировать PDF</button>
+</div>
+
+<!-- ИНСТРУКЦИЯ -->
+<div class="card">
+  <h2 id="how-title">📖 Как пользоваться</h2>
+  <ul id="how-list">
+    <li>Загрузи Excel файл из упаковки ВБ</li>
+    <li>Заполни данные поставки</li>
+    <li>Нажми кнопку генерации</li>
+    <li>PDF скачается автоматически</li>
+  </ul>
+</div>
+
+<!-- ПЛЮСЫ -->
+<div class="card">
+  <h2 id="benefits-title">⚡ Что ты получаешь</h2>
+  <ul id="benefits-list">
+    <li>Автоматическая генерация упаковочных листов</li>
+    <li>Достаточно распечатать их на этикетках 75*120 мм и наклеить на паллеты</li>
+    <li>QR-коды для каждой паллеты</li>
+    <li>Экономия времени и ошибок</li>
+  </ul>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <h2 id="cta-title">💼 Нужен такой же софт?</h2>
+  <p id="cta-desc">Делаю автоматизацию под Wildberries, Ozon и склады</p>
+  <a href="https://t.me/InTeam_0" target="_blank">
+    <button>Написать в Telegram</button>
+  </a>
+</div>
+
+<div class="footer">
+  © Автоматизация бизнеса | @InTeam_0
+</div>
+
+</div>
+
+<script>
+// ===== Переключение языков =====
+const translations = {
+  ru: { badge:"🔥 Бесплатный инструмент", heroTitle:"Генератор упаковочных листов", heroDesc:"Сделай PDF для поставки за 5 секунд вместо ручной работы",
+        howTitle:"📖 Как пользоваться", howList:["Загрузи Excel файл из упаковки ВБ","Заполни данные поставки","Нажми кнопку генерации","PDF скачается автоматически"],
+        benefitsTitle:"⚡ Что ты получаешь", benefitsList:["Автоматическая генерация упаковочных листов","Достаточно распечатать их на этикетках 75*120 мм и наклеить на паллеты","QR-коды для каждой паллеты","Экономия времени и ошибок"],
+        ctaTitle:"💼 Нужен такой же софт?", ctaDesc:"Делаю автоматизацию под Wildberries, Ozon и склады"
+  },
+  en: { badge:"🔥 Free Tool", heroTitle:"Packing Sheet Generator", heroDesc:"Create PDFs for shipments in 5 seconds instead of manual work",
+        howTitle:"📖 How to use", howList:["Upload Excel file from WB package","Fill in shipment details","Click generate","PDF will download automatically"],
+        benefitsTitle:"⚡ What you get", benefitsList:["Automatic packing sheet generation","Just print on 75*120 mm labels and stick on pallets","QR codes for each pallet","Save time and prevent mistakes"],
+        ctaTitle:"💼 Need similar software?", ctaDesc:"I create automation for Wildberries, Ozon, and warehouses"
+  }
+};
+
+function switchLang(lang){
+  document.querySelectorAll(".lang-switch button").forEach(b=>b.classList.remove("active"));
+  event.target.classList.add("active");
+  const t = translations[lang];
+  document.getElementById("badge").innerText = t.badge;
+  document.getElementById("hero-title").innerText = t.heroTitle;
+  document.getElementById("hero-desc").innerText = t.heroDesc;
+  document.getElementById("how-title").innerText = t.howTitle;
+  const howList = document.getElementById("how-list"); howList.innerHTML="";
+  t.howList.forEach(i=>howList.innerHTML+="<li>"+i+"</li>");
+  document.getElementById("benefits-title").innerText = t.benefitsTitle;
+  const benefitsList = document.getElementById("benefits-list"); benefitsList.innerHTML="";
+  t.benefitsList.forEach(i=>benefitsList.innerHTML+="<li>"+i+"</li>");
+  document.getElementById("cta-title").innerText = t.ctaTitle;
+  document.getElementById("cta-desc").innerText = t.ctaDesc;
+}
+
+// ===== Показ/скрытие транзитного поля =====
+function toggleTransit(){
+  const val=document.getElementById("supplyType").value;
+  const transitFields=document.getElementById("transitFields");
+  transitFields.classList.toggle("hidden", val!=="ТРАНЗИТ");
+}
+
+// ===== Генерация PDF =====
+function generatePDF(){
+  const file=document.getElementById("excel").files[0];
+  if(!file){alert("Загрузите Excel файл"); return;}
+  const supplyNumber=document.getElementById("supplyNumber").value.trim();
+  const warehouse=document.getElementById("warehouse").value.trim();
+  const legalEntity=document.getElementById("legalEntity").value.trim();
+  const supplyDate=document.getElementById("supplyDate").value;
+  const supplyType=document.getElementById("supplyType").value;
+  const pdfFormat=document.getElementById("pdfFormat").value;
+  const transitWarehouse=document.getElementById("transitWarehouse")?.value.trim();
+
+  if(!supplyNumber||!warehouse||!legalEntity||!supplyDate){alert("Заполните все поля"); return;}
+
+  const pdfName=file.name.replace(/\.[^/.]+$/, "")+".pdf";
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const data=new Uint8Array(e.target.result);
+    const workbook=XLSX.read(data,{type:"array"});
+    const sheet=workbook.Sheets[workbook.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(sheet);
+
+    const boxes={};
+    rows.forEach(r=>{
+      const box=r["ШК короба"];
+      if(!boxes[box]) boxes[box]=[];
+      boxes[box].push({barcode:r["Баркод товара"],qty:r["Кол-во товаров"]});
+    });
+
+    const boxKeys=Object.keys(boxes);
+    const total=boxKeys.length;
+    const content=[];
+
+    boxKeys.forEach((box,i)=>{
+      const items=boxes[box];
+      const tableBody=[["Баркод товара","Количество"]];
+      items.forEach(it=>tableBody.push([it.barcode,it.qty]));
+
+      const info=[
+        {text:"Порядковый номер паллеты: "+(i+1), fontSize:10},
+        {text:"Количество паллет в поставке: "+total, fontSize:10},
+        {text:"Номер поставки: "+supplyNumber, fontSize:10},
+        {text:"Склад назначения: "+warehouse, fontSize:10}
+      ];
+      if(supplyType==="ТРАНЗИТ") info.push({text:"Транзитный склад: "+transitWarehouse, fontSize:10});
+      info.push({text:"Тип поставки: "+supplyType, fontSize:10});
+      info.push({text:"Наименование юридического лица: "+legalEntity, fontSize:10});
+      info.push({text:"Дата поставки: "+supplyDate, fontSize:10});
+
+      if(pdfFormat==="small"){
+        content.push({text:"УПАКОВОЧНЫЙ ЛИСТ",bold:true,fontSize:12,alignment:"center"});
+        content.push(...info);
+        content.push({text:" "},{table:{widths:["*","auto"],body:tableBody},layout:"lightHorizontalLines"});
+        content.push({text:" "},{qr: box, fit:90, alignment:"center"},{text: box, alignment:"center", bold:true},{text:"", pageBreak:"after"});
+      } else {
+        content.push({text:"УПАКОВОЧНЫЙ ЛИСТ",bold:true,fontSize:18,alignment:"center",margin:[0,10]});
+        content.push(...info.map(x=>({...x, fontSize:14, alignment:"center", margin:[0,3]})));
+        content.push({text:" "},{table:{widths:["*","auto"],body:tableBody},layout:"lightHorizontalLines"});
+        content.push({text:" "},{qr: box, fit:200, alignment:"center"},{text: box, alignment:"center", bold:true, fontSize:16},{text:"", pageBreak:"after"});
+      }
+    });
+
+    const pageSize=pdfFormat==="small"?{width:226,height:340}:"A4";
+    const pageMargins=pdfFormat==="small"?[10,10,10,10]:[40,40,40,40];
+    const doc={pageSize,pageMargins,content};
+    pdfMake.createPdf(doc).download(pdfName);
+  }
+  reader.readAsArrayBuffer(file);
+}
+</script>
+
+</body>
+</html>
